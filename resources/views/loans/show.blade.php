@@ -1,87 +1,106 @@
 @extends('layouts.app')
 
-@section('title', 'Detail Peminjaman #' . $loan->id)
+@section('title', 'Detail Peminjaman')
+@section('subtitle', 'Informasi lengkap satu transaksi peminjaman')
 
 @section('content')
-<div class="row justify-content-center">
-    <div class="col-lg-10">
-        <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h3 class="mb-0">
-                    <i class="bi bi-journal-text me-2 text-warning"></i>Peminjaman #{{ $loan->id }}
-                </h3>
-                <a href="{{ route('loans.index') }}" class="btn btn-outline-secondary btn-sm">
-                    <i class="bi bi-arrow-left"></i> Kembali
-                </a>
+<div class="page-hero fade-in-up">
+    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
+        <div>
+            <div class="page-hero-kicker">
+                <i class="bi bi-journal-text"></i>
+                Detail
             </div>
-            <div class="card-body">
-                <div class="row mb-4">
+            <h1 class="page-hero-title">Peminjaman #{{ $loan->id }}</h1>
+            <p class="page-hero-subtitle">Lihat detail buku, anggota, status, dan langkah lanjutan dari transaksi ini.</p>
+        </div>
+        <a href="{{ route('loans.index') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2"></i>Kembali
+        </a>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="surface-card fade-in-up delay-1">
+            <div class="surface-card-header">
+                <h5 class="mb-0">Rincian Transaksi</h5>
+            </div>
+            <div class="surface-card-body">
+                <div class="row g-3">
                     <div class="col-md-6">
-                        <h6 class="fw-semibold text-muted mb-3">Buku</h6>
-                        <h5>{{ $loan->book->title }}</h5>
-                        <p class="mb-1"><strong>{{ $loan->book->author }}</strong></p>
-                        <p class="text-muted mb-0">{{ $loan->book->publisher }} • {{ $loan->book->year }}</p>
+                        <div class="metric-card h-100">
+                            <div class="metric-label">Buku</div>
+                            <div class="fw-semibold">{{ $loan->book->title }}</div>
+                            <small class="soft-text">{{ $loan->book->author }}</small>
+                            <div class="soft-text mt-2">{{ $loan->book->publisher }} • {{ $loan->book->year }}</div>
+                        </div>
                     </div>
                     <div class="col-md-6">
-                        <h6 class="fw-semibold text-muted mb-3">Anggota</h6>
-                        <h5>{{ $loan->member->name }}</h5>
-                        <p class="mb-1"><i class="bi bi-telephone me-1"></i>{{ $loan->member->phone }}</p>
-                        <p class="text-muted mb-0">{{ Str::limit($loan->member->address, 50) }}</p>
-                    </div>
-                </div>
-                <hr>
-                <div class="row">
-                    <div class="col-md-3">
-                        <label class="fw-semibold text-muted small">Tgl Pinjam</label>
-                        <h6>{{ $loan->loan_date->format('d M Y') }}</h6>
+                        <div class="metric-card h-100">
+                            <div class="metric-label">Anggota</div>
+                            <div class="fw-semibold">{{ $loan->member->name }}</div>
+                            <small class="soft-text d-block">{{ $loan->member->phone }}</small>
+                            <div class="soft-text mt-2">{{ $loan->member->address }}</div>
+                        </div>
                     </div>
                     <div class="col-md-3">
-                        <label class="fw-semibold text-muted small">Batas Kembali</label>
-                        <h6 class="{{ $loan->due_date < now()->format('Y-m-d') ? 'text-danger' : '' }}">
-                            {{ $loan->due_date->format('d M Y') }}
-                        </h6>
+                        <div class="metric-card h-100">
+                            <div class="metric-label">Tgl Pinjam</div>
+                            <div class="fw-semibold">{{ $loan->loan_date->format('d M Y') }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="metric-card h-100">
+                            <div class="metric-label">Batas Kembali</div>
+                            <div class="fw-semibold {{ $loan->due_date < now()->format('Y-m-d') ? 'text-danger' : '' }}">
+                                {{ $loan->due_date->format('d M Y') }}
+                            </div>
+                        </div>
                     </div>
                     @if($loan->return_date)
                         <div class="col-md-3">
-                            <label class="fw-semibold text-muted small">Tgl Dikembalikan</label>
-                            <h6 class="text-success">{{ $loan->return_date->format('d M Y') }}</h6>
+                            <div class="metric-card h-100">
+                                <div class="metric-label">Tgl Dikembalikan</div>
+                                <div class="fw-semibold text-success">{{ $loan->return_date->format('d M Y') }}</div>
+                            </div>
                         </div>
                         <div class="col-md-3">
-                            <label class="fw-semibold text-muted small">Denda</label>
-                            <h6 class="{{ $loan->fine > 0 ? 'text-danger' : 'text-success' }}">
-                                {{ $loan->fine > 0 ? 'Rp ' . number_format($loan->fine) : 'Gratis' }}
-                            </h6>
+                            <div class="metric-card h-100">
+                                <div class="metric-label">Denda</div>
+                                <div class="fw-semibold {{ $loan->fine > 0 ? 'text-danger' : 'text-success' }}">
+                                    {{ $loan->fine > 0 ? 'Rp ' . number_format($loan->fine) : 'Gratis' }}
+                                </div>
+                            </div>
                         </div>
                     @endif
                 </div>
-                <hr class="my-4">
-                <div class="row">
-                    <div class="col-md-4">
-                        <label class="fw-semibold text-muted small">Status</label>
-                        @if($loan->return_date)
-                            <span class="badge bg-success fs-5 px-3 py-2">Selesai</span>
-                        @elseif($loan->due_date < now()->format('Y-m-d'))
-                            <span class="badge bg-danger fs-5 px-3 py-2">Terlambat</span>
-                        @else
-                            <span class="badge bg-warning text-dark fs-5 px-3 py-2">Aktif</span>
-                        @endif
-                    </div>
-                    <div class="col-md-8 text-md-end">
-                        @if(!$loan->return_date)
-                            <a href="{{ route('loans.returnForm', $loan) }}" class="btn btn-success me-2">
-                                <i class="bi bi-arrow-return-left me-1"></i>Kembalikan
-                            </a>
-                        @endif
-                        <form action="{{ route('loans.destroy', $loan) }}" method="POST" class="d-inline" 
-                              onsubmit="return confirm('Hapus peminjaman ini?')">
-                            @csrf @method('DELETE')
-                            <button class="btn btn-danger">Hapus</button>
-                        </form>
-                    </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="surface-card fade-in-up delay-2 h-100">
+            <div class="surface-card-header">
+                <h5 class="mb-0">Aksi Cepat</h5>
+            </div>
+            <div class="surface-card-body">
+                <div class="d-grid gap-2">
+                    @if(!$loan->return_date)
+                        <a href="{{ route('loans.returnForm', $loan) }}" class="btn btn-success">
+                            <i class="bi bi-arrow-return-left me-2"></i>Kembalikan
+                        </a>
+                    @endif
+                    <form action="{{ route('loans.destroy', $loan) }}" method="POST" class="d-grid" onsubmit="return confirm('Hapus peminjaman ini?')">
+                        @csrf
+                        @method('DELETE')
+                        <button class="btn btn-danger" type="submit">
+                            <i class="bi bi-trash me-2"></i>Hapus
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 </div>
 @endsection
-

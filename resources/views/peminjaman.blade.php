@@ -1,224 +1,288 @@
 @extends('layouts.app')
 
-@section('title', 'Permintaan Peminjaman')
+@section('title', 'Daftar Buku')
+@section('subtitle', 'Pilih buku yang ingin dipinjam dan ajukan permohonan ke admin')
 
 @section('content')
 <style>
-.borrow-shell {
-    min-height: 100vh;
-    background:
-        radial-gradient(circle at top right, rgba(16, 185, 129, 0.12), transparent 24%),
-        radial-gradient(circle at bottom left, rgba(59, 130, 246, 0.13), transparent 28%),
-        linear-gradient(135deg, #f8fbff 0%, #eefaf5 46%, #f8fafc 100%);
-    padding: 2rem 0;
+.book-card {
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid var(--border-soft);
+    border-radius: 16px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 }
-.borrow-hero,
-.borrow-card,
-.borrow-note {
-    animation: borrowRise 0.65s ease both;
+
+.book-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+    border-color: var(--primary);
 }
-.borrow-hero {
-    background: rgba(255, 255, 255, 0.8);
-    border: 1px solid rgba(255, 255, 255, 0.88);
-    backdrop-filter: blur(16px);
-    border-radius: 24px;
-    padding: 1.75rem;
-    box-shadow: 0 18px 42px rgba(15, 23, 42, 0.08);
-    margin-bottom: 1.5rem;
-}
-.borrow-chip {
-    display: inline-flex;
+
+.book-cover {
+    width: 100%;
+    height: 200px;
+    background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
+    border-radius: 12px;
+    display: flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 0.9rem;
-    border-radius: 999px;
-    background: linear-gradient(135deg, #dcfce7, #ecfdf5);
-    color: #047857;
-    font-size: 0.85rem;
-    font-weight: 700;
+    justify-content: center;
+    overflow: hidden;
+    margin-bottom: 1rem;
+    object-fit: cover;
+}
+
+.book-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.book-cover-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+}
+
+.book-cover-placeholder i {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    opacity: 0.5;
+}
+
+.book-header {
     margin-bottom: 1rem;
 }
-.borrow-title {
-    font-size: clamp(2rem, 4vw, 2.65rem);
-    font-weight: 800;
-    letter-spacing: -0.03em;
-    color: #0f172a;
+
+.book-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0.3rem;
+    line-height: 1.3;
+}
+
+.book-author {
+    font-size: 0.9rem;
+    color: var(--text-muted);
     margin-bottom: 0.5rem;
 }
-.borrow-subtitle {
-    color: #64748b;
-    max-width: 720px;
-    margin-bottom: 0;
-}
-.borrow-card {
-    background: rgba(255, 255, 255, 0.88);
-    border: 1px solid #e2e8f0;
-    border-radius: 24px;
-    overflow: hidden;
-    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
-}
-.borrow-card-header {
-    padding: 1.4rem 1.6rem;
-    border-bottom: 1px solid #e2e8f0;
-    background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(248,250,252,0.9));
-}
-.borrow-card-body {
-    padding: 1.6rem;
-}
-.form-label {
-    color: #0f172a;
-    margin-bottom: 0.55rem;
-}
-.form-select,
-.form-control {
-    border-radius: 16px;
-    border-color: #dbe4f0;
-    padding: 0.9rem 1rem;
-    box-shadow: none;
-    transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
-}
-.form-select:focus,
-.form-control:focus {
-    border-color: #60a5fa;
-    box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.14);
-    transform: translateY(-1px);
-}
-.field-panel {
-    height: 100%;
-    border-radius: 20px;
-    border: 1px solid #e2e8f0;
-    background: linear-gradient(180deg, #ffffff, #f8fbff);
-    padding: 1.1rem;
-}
-.field-hint {
-    color: #64748b;
-    font-size: 0.9rem;
-}
-.borrow-note {
-    margin-top: 1.3rem;
-    border: 1px solid #dbeafe;
-    background: linear-gradient(135deg, #eff6ff, #f8fbff);
-    color: #1d4ed8;
-    border-radius: 18px;
-    padding: 1rem 1.1rem;
-}
-.borrow-actions {
+
+.book-info {
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.85rem;
-    justify-content: flex-end;
-    margin-top: 1.5rem;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    background: #f8fafc;
+    border-radius: 12px;
+    font-size: 0.85rem;
 }
-.borrow-btn {
-    border-radius: 16px;
-    padding: 0.9rem 1.2rem;
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.info-label {
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.info-value {
+    color: var(--text-dark);
     font-weight: 600;
-    transition: transform 0.28s ease, box-shadow 0.28s ease;
 }
-.borrow-btn:hover {
-    transform: translateY(-2px);
+
+.stock-badge {
+    display: inline-block;
+    padding: 0.3rem 0.7rem;
+    background: var(--success-bg);
+    color: var(--success);
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
 }
-.borrow-btn-primary {
-    background: linear-gradient(135deg, #2563eb, #0f766e);
+
+.stock-badge.out {
+    background: #fee2e2;
+    color: var(--danger);
+}
+
+.book-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: auto;
+}
+
+.btn-pinjam {
+    flex: 1;
+    padding: 0.6rem 1rem;
+    background: linear-gradient(135deg, var(--primary), #2563eb);
+    color: white;
     border: none;
-    color: #fff;
-    box-shadow: 0 16px 28px rgba(37, 99, 235, 0.2);
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
-.borrow-btn-primary:hover {
-    color: #fff;
-    box-shadow: 0 20px 34px rgba(37, 99, 235, 0.26);
+
+.btn-pinjam:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
 }
-.borrow-btn-secondary {
-    background: #fff;
-    border: 1px solid #cbd5e1;
-    color: #475569;
+
+.btn-pinjam:disabled {
+    background: #cbd5e1;
+    cursor: not-allowed;
+    transform: none;
 }
-@keyframes borrowRise {
-    from { opacity: 0; transform: translateY(18px); }
-    to { opacity: 1; transform: translateY(0); }
+
+.empty-state {
+    grid-column: 1 / -1;
+    padding: 3rem;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid var(--border-soft);
+    border-radius: 16px;
 }
-@media (max-width: 768px) {
-    .borrow-hero,
-    .borrow-card-body {
-        padding: 1.25rem;
-    }
-    .borrow-actions .borrow-btn {
-        width: 100%;
-    }
+
+.empty-icon {
+    font-size: 3rem;
+    color: var(--primary);
+    margin-bottom: 1rem;
 }
 </style>
 
-<div class="borrow-shell">
-    <div class="container">
-        <div class="borrow-hero">
-            <div class="borrow-chip">
-                <i class="bi bi-lightning-charge"></i>
-                Form Peminjaman Cepat
-            </div>
-            <h1 class="borrow-title">Ajukan Peminjaman</h1>
-            <p class="borrow-subtitle">pinjam dengan pintar.</p>
+<div class="page-hero fade-in-up">
+    <h1 class="page-hero-title"><i class="bi bi-journals me-2"></i>Daftar Buku</h1>
+    <p class="page-hero-subtitle">Pilih buku yang ingin dipinjam dan ajukan permohonan peminjaman ke admin</p>
+</div>
+
+<div class="container-fluid">
+    @if($books->isEmpty())
+        <div class="empty-state">
+            <div class="empty-icon"><i class="bi bi-inbox"></i></div>
+            <h5 class="fw-bold">Tidak Ada Buku Tersedia</h5>
+            <p class="text-muted mb-0">Semua buku sedang tidak tersedia atau kosong. Silahkan cek lagi nanti.</p>
         </div>
-
-        <div class="row justify-content-center">
-            <div class="col-xl-9">
-                <div class="borrow-card">
-                    <div class="borrow-card-header">
-                        <h4 class="card-title mb-0">
-                            <i class="bi bi-plus-circle me-2 text-success"></i>Pinjam Buku Baru
-                        </h4>
-                    </div>
-                    <div class="borrow-card-body">
-                        <form method="POST" action="{{ route('peminjaman.store') }}">
-                            @csrf
-                            <div class="field-panel mb-4">
-                                <label class="form-label fw-semibold">Pilih Buku <span class="text-danger">*</span></label>
-                                <select class="form-select @error('book_id') is-invalid @enderror" name="book_id" required>
-                                    <option value="">Pilih Buku Tersedia</option>
-                                    @foreach($books as $book)
-                                        <option value="{{ $book->id }}" {{ old('book_id') == $book->id ? 'selected' : '' }}>
-                                            {{ $book->title }} - {{ $book->author }} (Stok: {{ $book->stock }})
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error('book_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                                <div class="field-hint mt-2">Pilih buku yang masih tersedia untuk langsung mengirim permintaan peminjaman.</div>
-                            </div>
-
-                            <div class="row g-4">
-                                <div class="col-md-6">
-                                    <div class="field-panel">
-                                        <label class="form-label fw-semibold">Tanggal Pinjam <span class="text-danger">*</span></label>
-                                        <input type="date" class="form-control @error('loan_date') is-invalid @enderror" name="loan_date" value="{{ old('loan_date', now()->format('Y-m-d')) }}" required>
-                                        @error('loan_date') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                                        <div class="field-hint mt-2">Jam pinjam otomatis mengikuti waktu saat ini: {{ now()->format('H:i') }} WIB</div>
-                                    </div>
+    @else
+        <div class="row g-3">
+            @foreach($books as $book)
+                <div class="col-sm-6 col-lg-4">
+                    <div class="book-card">
+                        <div class="book-cover">
+                            @if($book->cover_path)
+                                <img src="{{ asset('storage/' . $book->cover_path) }}" alt="{{ $book->title }}" loading="lazy">
+                            @else
+                                <div class="book-cover-placeholder">
+                                    <i class="bi bi-book"></i>
+                                    <small>Tidak ada cover</small>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="field-panel">
-                                        <label class="form-label fw-semibold">Tanggal Jatuh Tempo <span class="text-danger">*</span></label>
-                                        <input type="date" class="form-control @error('due_date') is-invalid @enderror" name="due_date" value="{{ old('due_date') }}" required>
-                                        @error('due_date') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                                        <div class="field-hint mt-2">Jam jatuh tempo akan mengikuti jam peminjaman otomatis.</div>
-                                    </div>
-                                </div>
-                            </div>
+                            @endif
+                        </div>
 
-                            <div class="borrow-note">
-                                <i class="bi bi-info-circle me-2"></i>Pastikan tanggal jatuh tempo sesuai kebutuhan. Permintaan akan dikirim ke admin untuk diverifikasi.
-                            </div>
+                        <div class="book-header">
+                            <div class="book-title">{{ $book->title }}</div>
+                            <div class="book-author"><i class="bi bi-person me-1"></i>{{ $book->author ?? 'Penulis Tidak Diketahui' }}</div>
+                        </div>
 
-                            <div class="borrow-actions">
-                                <a href="{{ route('books') }}" class="btn borrow-btn borrow-btn-secondary">Batal</a>
-                                <button type="submit" class="btn borrow-btn borrow-btn-primary">
-                                    <i class="bi bi-send-check me-2"></i>Kirim Permintaan
-                                </button>
+                        <div class="book-info">
+                            <div class="info-item">
+                                <i class="bi bi-bookmark text-primary"></i>
+                                <span class="info-label">Kategori:</span>
+                                <span class="info-value">{{ $book->category ?? 'Umum' }}</span>
                             </div>
-                        </form>
+                            <div class="info-item">
+                                <i class="bi bi-stack text-success"></i>
+                                <span class="info-label">Stok:</span>
+                                <span class="info-value stock-badge {{ $book->stock <= 0 ? 'out' : '' }}">
+                                    {{ $book->stock }} buku
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="book-actions">
+                            <button type="button" 
+                                    class="btn-pinjam" 
+                                    onclick="openBorrowModal({{ $book->id }}, '{{ $book->title }}')"
+                                    {{ $book->stock <= 0 ? 'disabled' : '' }}>
+                                <i class="bi bi-bookmark-check me-1"></i>{{ $book->stock <= 0 ? 'Tidak Tersedia' : 'Pinjam' }}
+                            </button>
+                        </div>
                     </div>
                 </div>
+            @endforeach
+        </div>
+    @endif
+</div>
+
+<!-- Modal Peminjaman -->
+<div class="modal fade" id="borrowModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 16px; border: 1px solid var(--border-soft);">
+            <div class="modal-header border-bottom" style="padding: 1.5rem;">
+                <h5 class="modal-title fw-bold"><i class="bi bi-bookmark-check me-2 text-primary"></i>Ajukan Peminjaman</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="padding: 1.5rem;">
+                <form method="POST" action="{{ route('peminjaman.store') }}" id="borrowForm">
+                    @csrf
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Buku: <span id="bookTitle" class="text-primary"></span></label>
+                        <input type="hidden" name="book_id" id="bookId">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Tanggal Pinjam <span class="text-danger">*</span></label>
+                        <input type="date" class="form-control soft-input @error('loan_date') is-invalid @enderror" 
+                               name="loan_date" 
+                               id="loanDate"
+                               value="{{ old('loan_date', now()->format('Y-m-d')) }}" 
+                               required>
+                        <small class="form-text text-muted">Jam pinjam: {{ now()->format('H:i') }} WIB</small>
+                        @error('loan_date') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Tanggal Jatuh Tempo <span class="text-danger">*</span></label>
+                        <input type="date" class="form-control soft-input @error('due_date') is-invalid @enderror" 
+                               name="due_date" 
+                               id="dueDate"
+                               value="{{ old('due_date') }}" 
+                               required>
+                        @error('due_date') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-outline-secondary flex-grow-1" data-bs-dismiss="modal">
+                            <i class="bi bi-x-circle me-1"></i>Batal
+                        </button>
+                        <button type="submit" class="btn btn-primary flex-grow-1">
+                            <i class="bi bi-send-check me-1"></i>Ajukan
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 </div>
-@endsection
 
+<script>
+function openBorrowModal(bookId, bookTitle) {
+    document.getElementById('bookId').value = bookId;
+    document.getElementById('bookTitle').textContent = bookTitle;
+    document.getElementById('loanDate').value = new Date().toISOString().split('T')[0];
+    document.getElementById('dueDate').value = '';
+    new bootstrap.Modal(document.getElementById('borrowModal')).show();
+}
+</script>
+@endsection

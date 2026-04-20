@@ -1,75 +1,119 @@
 @extends('layouts.app')
 
 @section('title', $book->title)
+@section('subtitle', 'Detail buku, cover, dan riwayat peminjaman')
 
 @section('content')
-<div class="row g-4">
-    <div class="col-lg-8">
-        <div class="card">
-            <div class="card-header d-flex justify-content-between">
-                <h3 class="mb-0">
-                    <i class="bi bi-book me-2 text-primary"></i>{{ $book->title }}
-                </h3>
-                <a href="{{ route('books.index') }}" class="btn btn-outline-secondary btn-sm">
-                    <i class="bi bi-arrow-left"></i> Kembali
-                </a>
+<div class="page-hero fade-in-up">
+    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-4">
+        <div>
+            <div class="page-hero-kicker">
+                <i class="bi bi-book-half"></i>
+                Detail Buku
             </div>
-            <div class="card-body">
-                <div class="row mb-4">
+            <h1 class="page-hero-title">{{ $book->title }}</h1>
+            <p class="page-hero-subtitle">{{ $book->author }} - {{ $book->publisher }}</p>
+        </div>
+        <div class="page-actions">
+            <a href="{{ route('books.index') }}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Kembali
+            </a>
+            <a href="{{ route('books.edit', $book) }}" class="btn btn-warning">
+                <i class="bi bi-pencil me-2"></i>Edit
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="surface-card fade-in-up delay-1 h-100">
+            <div class="surface-card-body">
+                @if($book->cover_url)
+                    <img src="{{ $book->cover_url }}" alt="Cover {{ $book->title }}" class="img-fluid rounded-4 border" style="width: 100%; object-fit: cover;">
+                @else
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <i class="bi bi-image"></i>
+                        </div>
+                        <h5 class="mb-2">Belum ada cover</h5>
+                        <p class="soft-text mb-0">Cover buku akan tampil di sini setelah diunggah.</p>
+                    </div>
+                @endif
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        <div class="surface-card fade-in-up delay-2">
+            <div class="surface-card-header">
+                <h5 class="mb-0">Informasi Buku</h5>
+            </div>
+            <div class="surface-card-body">
+                <div class="row g-3">
                     <div class="col-md-6">
-                        <label class="form-label fw-semibold text-muted small mb-2">Judul</label>
-                        <h5 class="mb-3">{{ $book->title }}</h5>
-                        <label class="form-label fw-semibold text-muted small mb-2">Pengarang</label>
-                        <p class="mb-2">{{ $book->author }}</p>
-                        <label class="form-label fw-semibold text-muted small mb-2">Penerbit</label>
-                        <p>{{ $book->publisher }}</p>
+                        <div class="metric-card h-100">
+                            <div class="metric-label">Judul</div>
+                            <div class="fw-semibold">{{ $book->title }}</div>
+                        </div>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label fw-semibold text-muted small mb-2">Tahun</label>
-                        <span class="badge bg-secondary fs-6 mb-3 d-inline-block">{{ $book->year }}</span>
-                        <label class="form-label fw-semibold text-muted small mb-2">Kategori</label>
-                        @if($book->category)
-                            <span class="badge bg-info mb-3 d-inline-block">{{ $book->category }}</span>
-                        @else
-                            <span class="badge bg-light text-dark mb-3 d-inline-block">Umum</span>
-                        @endif
-                        <label class="form-label fw-semibold text-muted small mb-2">Stok</label>
-                        @if($book->stock > 0)
-                            <span class="badge bg-success fs-5">{{ $book->stock }} Tersedia</span>
-                        @else
-                            <span class="badge bg-danger fs-5">Habis</span>
-                        @endif
+                        <div class="metric-card h-100">
+                            <div class="metric-label">Pengarang</div>
+                            <div class="fw-semibold">{{ $book->author }}</div>
+                        </div>
                     </div>
-                </div>
-                <hr>
-                <div class="row text-center">
-                    <div class="col-md-4">
-                        <small class="text-muted">Dibuat</small>
-                        <p class="mb-0 fw-semibold">{{ $book->created_at->format('d M Y') }}</p>
+                    <div class="col-md-6">
+                        <div class="metric-card h-100">
+                            <div class="metric-label">Penerbit</div>
+                            <div class="fw-semibold">{{ $book->publisher }}</div>
+                        </div>
                     </div>
-                    <div class="col-md-4">
-                        <small class="text-muted">Diperbarui</small>
-                        <p class="mb-0 fw-semibold">{{ $book->updated_at->format('d M Y') }}</p>
+                    <div class="col-md-3">
+                        <div class="metric-card h-100">
+                            <div class="metric-label">Tahun</div>
+                            <div class="metric-value" style="font-size: 1.3rem;">{{ $book->year }}</div>
+                        </div>
                     </div>
-                    <div class="col-md-4">
-                        <small class="text-muted">ID</small>
-                        <p class="mb-0 fw-semibold">#{{ $book->id }}</p>
+                    <div class="col-md-3">
+                        <div class="metric-card h-100">
+                            <div class="metric-label">Stok</div>
+                            <div class="metric-value" style="font-size: 1.3rem;">
+                                {{ $book->stock > 0 ? $book->stock : 'Habis' }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="metric-card h-100">
+                            <div class="metric-label">Kategori</div>
+                            <span class="soft-badge soft-badge-info">
+                                <i class="bi bi-bookmark-star"></i>
+                                {{ $book->category ?? 'Umum' }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="metric-card h-100">
+                            <div class="metric-label">Status Stok</div>
+                            <span class="soft-badge {{ $book->stock > 0 ? 'soft-badge-success' : 'soft-badge-danger' }}">
+                                <i class="bi {{ $book->stock > 0 ? 'bi-check-circle' : 'bi-x-circle' }}"></i>
+                                {{ $book->stock > 0 ? 'Tersedia' : 'Habis' }}
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
         @if($book->loans()->exists())
-            <div class="card mt-4">
-                <div class="card-header">
-                    <h5 class="mb-0">
-                        <i class="bi bi-journal-text me-2"></i>Riwayat Peminjaman ({{ $book->loans()->count() }})
-                    </h5>
+            <div class="surface-card fade-in-up delay-3 mt-4">
+                <div class="surface-card-header">
+                    <h5 class="mb-0">Riwayat Peminjaman</h5>
                 </div>
-                <div class="card-body p-0">
+                <div class="surface-card-body p-0">
                     <div class="table-responsive">
-                        <table class="table mb-0">
-                            <thead class="table-light">
+                        <table class="table table-hover mb-0 align-middle">
+                            <thead>
                                 <tr>
                                     <th>Anggota</th>
                                     <th>Tgl Pinjam</th>
@@ -78,22 +122,16 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($book->loans()->latest()->take(10) as $loan)
+                                @foreach($book->loans()->latest()->take(10)->get() as $loan)
                                     <tr>
                                         <td>{{ $loan->member->name ?? 'N/A' }}</td>
                                         <td>{{ $loan->loan_date->format('d M Y') }}</td>
+                                        <td>{{ $loan->return_date ? $loan->return_date->format('d M Y') : '-' }}</td>
                                         <td>
                                             @if($loan->return_date)
-                                                {{ $loan->return_date->format('d M Y') }}
+                                                <span class="soft-badge soft-badge-success">Selesai</span>
                                             @else
-                                                <span class="badge bg-warning text-dark">Aktif</span>
-                                            @endif
-                                        </td>
-                                        <td>
-                                            @if($loan->return_date)
-                                                <span class="badge bg-success">Selesai</span>
-                                            @else
-                                                <span class="badge bg-info">Dipinjam</span>
+                                                <span class="soft-badge soft-badge-info">Dipinjam</span>
                                             @endif
                                         </td>
                                     </tr>
@@ -105,30 +143,5 @@
             </div>
         @endif
     </div>
-    <div class="col-lg-4">
-        <div class="card h-100">
-            <div class="card-header">
-                <h6 class="mb-0 fw-semibold">Aksi Cepat</h6>
-            </div>
-            <div class="card-body">
-                <div class="d-grid gap-2">
-                    <a href="{{ route('books.edit', $book) }}" class="btn btn-warning">
-                        <i class="bi bi-pencil"></i> Edit
-                    </a>
-                    <form action="{{ route('books.destroy', $book) }}" method="POST" class="d-inline" 
-                          onsubmit="return confirm('Hapus {{ $book->title }}?')">
-                        @csrf @method('DELETE')
-                        <button class="btn btn-danger" type="submit">
-                            <i class="bi bi-trash"></i> Hapus
-                        </button>
-                    </form>
-                    <a href="{{ route('books.index') }}" class="btn btn-outline-secondary">
-                        <i class="bi bi-list"></i> Daftar Buku
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 @endsection
-

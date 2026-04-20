@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Storage;
 
 class Book extends Model
 {
@@ -16,6 +17,7 @@ class Book extends Model
         'year',
         'stock',
         'category',
+        'cover_path',
     ];
 
     /**
@@ -24,5 +26,10 @@ class Book extends Model
     public function loans()
     {
         return $this->hasMany(Loan::class);
+    }
+
+    public function getCoverUrlAttribute(): ?string
+    {
+        return $this->cover_path ? Storage::url($this->cover_path) : null;
     }
 }

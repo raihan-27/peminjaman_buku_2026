@@ -33,7 +33,7 @@ class UserController extends Controller
 
     public function requestBorrow()
     {
-        $books = Book::where('stock', '>', 0)->orderBy('title')->get(['id', 'title', 'stock']);
+        $books = Book::where('stock', '>', 0)->orderBy('title')->get(['id', 'title', 'author', 'category', 'stock', 'cover_path']);
         return view('peminjaman', compact('books'));
     }
 
@@ -95,22 +95,43 @@ class UserController extends Controller
 
     public function profile()
     {
-        $user = User::with(['loans.book'])
-            ->findOrFail(Session::get('user.id'));
+        $user = User::findOrFail(Session::get('user.id'));
 
-        $profileStats = [
-            'total_loans' => $user->loans->count(),
-            'pending_loans' => $user->loans->where('status', 'pending')->count(),
-            'active_loans' => $user->loans->where('status', 'approved')->whereNull('return_date')->count(),
-            'returned_loans' => $user->loans->whereNotNull('return_date')->count(),
-        ];
+        return view('profile', compact('user'));
+    }
 
-        $recentLoans = $user->loans
-            ->sortByDesc(fn (Loan $loan) => $loan->loaned_at_local ?? $loan->created_at)
-            ->take(5)
-            ->values();
+    public function updateProfile(Request $request)
+    {
+        $userId = Session::get('user.id');
+        $user = User::findOrFail($userId);
 
-        return view('profile', compact('user', 'profileStats', 'recentLoans'));
+        $request->validate([
+            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        if ($request->hasFile('profile_picture')) {
+            // Hapus foto lama jika ada
+            if ($user->profile_picture) {
+                $oldPath = storage_path('app/public/profile-pictures/' . $user->profile_picture);
+                if (file_exists($oldPath)) {
+                    unlink($oldPath);
+                }
+            }
+
+            // Simpan foto baru
+            $file = $request->file('profile_picture');
+            $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->storeAs('profile-pictures', $filename, 'public');
+
+            $user->update(['profile_picture' => $filename]);
+            
+            // Update session dengan profile_picture terbaru
+            $userSession = session('user');
+            $userSession['profile_picture'] = $filename;
+            session(['user' => $userSession]);
+        }
+
+        return back()->with('success', 'Foto profil berhasil diperbarui!');
     }
 }
 

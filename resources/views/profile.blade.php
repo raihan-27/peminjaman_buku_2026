@@ -1,167 +1,157 @@
 @extends('layouts.app')
 
 @section('title', 'Profil Saya')
+@section('subtitle', 'Kelola data profil akun Anda')
 
 @section('content')
-@php
-    $roleLabel = $user->role === 'admin' ? 'Administrator' : 'Pengguna';
-    $roleClass = $user->role === 'admin' ? 'role-admin-badge' : 'role-user-badge';
-@endphp
 
 <style>
-.profile-shell {
+/* Modern Professional SaaS Theme - Profile Extension */
+:root {
+    --bg-body: #f8fafc;
+    --text-dark: #0f172a;
+    --text-muted: #64748b;
+    --card-bg: #ffffff;
+    --border-soft: #e2e8f0;
+    
+    --primary: #4f46e5;
+    --primary-bg: #e0e7ff;
+    --success: #059669;
+    --success-bg: #d1fae5;
+    --warning: #d97706;
+    --warning-bg: #fef3c7;
+    --info: #0284c7;
+    --info-bg: #e0f2fe;
+    --danger: #dc2626;
+    --danger-bg: #fee2e2;
+}
+
+.profile-wrapper {
     min-height: 100vh;
-    background:
-        radial-gradient(circle at top left, rgba(179, 139, 89, 0.14), transparent 24%),
-        radial-gradient(circle at bottom right, rgba(53, 95, 82, 0.14), transparent 22%),
-        linear-gradient(135deg, #f8f2e8 0%, #f4ede1 48%, #f8f5ee 100%);
-    padding: 1rem 0;
+    background-color: var(--bg-body);
+    padding: 2rem 0;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
-.profile-card,
-.profile-stats .card,
-.history-card {
-    border-radius: 24px;
-    border: 1px solid #e7dac7;
-    background: rgba(255, 252, 247, 0.9);
-    box-shadow: 0 18px 36px rgba(65, 48, 31, 0.08);
-    animation: profileUp 0.6s ease both;
+
+/* Surface Cards */
+.surface-card {
+    background: var(--card-bg);
+    border-radius: 16px;
+    border: 1px solid var(--border-soft);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    overflow: hidden;
 }
-.profile-avatar {
-    width: 96px;
-    height: 96px;
-    border-radius: 28px;
-    background: linear-gradient(135deg, #b38b59, #7b5a35);
-    box-shadow: 0 14px 28px rgba(179, 139, 89, 0.26);
+
+
+
+/* Animations */
+.fade-in-up { animation: fadeInUp 0.5s ease-out both; }
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.3s; }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Utility */
+.profile-img-box {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 50%; /* Lingkaran penuh lebih profesional untuk profil */
+    border: 3px solid var(--card-bg);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
-.role-admin-badge {
-    background: linear-gradient(135deg, #f0e2ca, #e4c08e);
-    color: #7a4e1f;
+.profile-initial-box {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), #3b82f6);
+    color: #fff;
+    font-size: 2.5rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(79, 70, 229, 0.2);
 }
-.role-user-badge {
-    background: linear-gradient(135deg, #dbe9df, #c9ddd1);
-    color: #2f5a4e;
+.detail-item {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border-soft);
 }
-.history-card .card-header {
-    background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(247,241,231,0.95));
-    border-bottom: 1px solid #eadfce;
-}
-@keyframes profileUp {
-    from { opacity: 0; transform: translateY(16px); }
-    to { opacity: 1; transform: translateY(0); }
+.detail-item:last-child {
+    border-bottom: none;
 }
 </style>
 
-<div class="profile-shell">
-    <div class="row g-4">
-        <div class="col-lg-4">
-            <div class="card profile-card h-100">
-                <div class="card-body text-center p-4">
-                    <div class="profile-avatar text-white d-inline-flex align-items-center justify-content-center mb-3" style="font-size: 2rem;">
-                        {{ strtoupper(substr($user->name, 0, 1)) }}
+<div class="profile-wrapper">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-6 mx-auto">
+                <div class="surface-card fade-in-up delay-1 h-100 p-4">
+                    <div class="text-center mb-4">
+                        @if($user->profile_picture)
+                            <img src="{{ asset('storage/profile-pictures/' . $user->profile_picture) }}?t={{ time() }}" 
+                                 alt="{{ $user->name }}" 
+                                 class="profile-img-box mx-auto mb-3">
+                        @else
+                            <div class="profile-initial-box mx-auto mb-3">
+                                {{ strtoupper(substr($user->name, 0, 1)) }}
+                            </div>
+                        @endif
+                        
+                        <h3 class="mb-1 fw-bold fs-4 text-dark">{{ $user->name }}</h3>
+                        <p class="text-muted mb-3">{{ $user->email }}</p>
                     </div>
-                    <h3 class="mb-1">{{ $user->name }}</h3>
-                    <p class="text-muted mb-3">{{ $user->email }}</p>
-                    <span class="badge rounded-pill {{ $roleClass }} px-3 py-2">{{ $roleLabel }}</span>
-                    <div class="mt-4 text-start">
-                        <div class="mb-3">
-                            <small class="text-muted d-block">Role</small>
-                            <strong>{{ $user->role }}</strong>
-                        </div>
-                        <div>
-                            <small class="text-muted d-block">Bergabung</small>
-                            <strong>{{ $user->created_at?->format('d M Y, H:i') ?? '-' }} WIB</strong>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <div class="col-lg-8">
-            <div class="row g-3 mb-4 profile-stats">
-                <div class="col-md-3 col-6">
-                    <div class="card text-center h-100">
-                        <div class="card-body">
-                            <div class="fs-3 fw-bold" style="color:#355f52;">{{ $profileStats['total_loans'] }}</div>
-                            <small class="text-muted">Total</small>
+                    <div class="text-start mt-4">
+                        <div class="detail-item d-flex justify-content-between">
+                            <span class="text-muted">Hak Akses</span>
+                            <span class="fw-semibold text-dark text-capitalize">{{ $user->role }}</span>
+                        </div>
+                        <div class="detail-item d-flex justify-content-between">
+                            <span class="text-muted">Bergabung</span>
+                            <span class="fw-semibold text-dark">{{ $user->created_at?->format('d M Y') ?? '-' }}</span>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-3 col-6">
-                    <div class="card text-center h-100">
-                        <div class="card-body">
-                            <div class="fs-3 fw-bold" style="color:#9a6a2d;">{{ $profileStats['pending_loans'] }}</div>
-                            <small class="text-muted">Pending</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6">
-                    <div class="card text-center h-100">
-                        <div class="card-body">
-                            <div class="fs-3 fw-bold" style="color:#4a7c59;">{{ $profileStats['active_loans'] }}</div>
-                            <small class="text-muted">Aktif</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6">
-                    <div class="card text-center h-100">
-                        <div class="card-body">
-                            <div class="fs-3 fw-bold" style="color:#7b5a35;">{{ $profileStats['returned_loans'] }}</div>
-                            <small class="text-muted">Selesai</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
-            <div class="card history-card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0"><i class="bi bi-journal-text me-2"></i>Riwayat Terakhir</h5>
-                    <a href="{{ route('dashboard') }}" class="btn btn-outline-secondary btn-sm">Kembali ke Dashboard</a>
-                </div>
-                <div class="card-body p-0">
-                    @if($recentLoans->isEmpty())
-                        <div class="p-4 text-center text-muted">
-                            Belum ada aktivitas peminjaman.
-                        </div>
-                    @else
-                        <div class="table-responsive">
-                            <table class="table table-hover mb-0">
-                                <thead>
-                                    <tr>
-                                        <th>Buku</th>
-                                        <th>Pinjam</th>
-                                        <th>Jatuh Tempo</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($recentLoans as $loan)
-                                        <tr>
-                                            <td>
-                                                <strong>{{ $loan->book->title ?? '-' }}</strong>
-                                                <br><small class="text-muted">{{ $loan->book->author ?? '-' }}</small>
-                                            </td>
-                                            <td>{{ $loan->loaned_at_local?->format('d M Y, H:i') ?? '-' }} WIB</td>
-                                            <td>{{ $loan->due_at_local?->format('d M Y, H:i') ?? '-' }} WIB</td>
-                                            <td>
-                                                @if($loan->status === 'pending')
-                                                    <span class="badge bg-warning text-dark">Pending</span>
-                                                @elseif($loan->return_date)
-                                                    <span class="badge bg-secondary">Dikembalikan</span>
-                                                @elseif($loan->status === 'approved')
-                                                    <span class="badge bg-success">Aktif</span>
-                                                @else
-                                                    <span class="badge bg-danger">Ditolak</span>
-                                                @endif
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    @endif
+                    <div class="mt-4 pt-4 border-top">
+                        <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data" id="profileForm">
+                            @csrf
+                            <div class="mb-3">
+                                <label for="profile_picture" class="form-label fw-medium text-dark fs-6">
+                                    <i class="bi bi-camera me-1"></i> Ganti Foto Profil
+                                </label>
+                                <input type="file" 
+                                       class="form-control form-control-sm @error('profile_picture') is-invalid @enderror" 
+                                       id="profile_picture" 
+                                       name="profile_picture" 
+                                       accept="image/*"
+                                       onchange="previewImage(this)">
+                                <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">Maksimal 2MB (JPEG, PNG, JPG)</small>
+                                @error('profile_picture')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100 fw-medium">
+                                <i class="bi bi-cloud-upload me-1"></i> Perbarui Foto
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+function previewImage(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            console.log('Gambar dipilih:', input.files[0].name);
+            // Tambahkan logika preview visual di sini jika ingin menampilkan gambar sebelum diupload
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+</script>
 @endsection

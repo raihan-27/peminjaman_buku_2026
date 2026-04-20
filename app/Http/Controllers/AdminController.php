@@ -6,6 +6,8 @@ use App\Models\Book;
 use App\Models\Loan;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
 {
@@ -29,9 +31,13 @@ class AdminController extends Controller
             'year' => 'required|integer|min:1900|max:2100',
             'stock' => 'required|integer|min:1|max:100',
             'category' => 'required|string|max:100',
+            'cover' => 'required|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        Book::create($request->all());
+        $data = $request->except('cover');
+        $data['cover_path'] = $this->storeBookCover($request->file('cover'));
+
+        Book::create($data);
         return redirect()->route('admin.books')->with('success', 'Buku ditambahkan!');
     }
 
@@ -49,14 +55,23 @@ class AdminController extends Controller
             'year' => 'required|integer|min:1900|max:2100',
             'stock' => 'required|integer|min:0|max:100',
             'category' => 'required|string|max:100',
+            'cover' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        $book->update($request->all());
+        $data = $request->except('cover');
+
+        if ($request->hasFile('cover')) {
+            $this->deleteBookCover($book->cover_path);
+            $data['cover_path'] = $this->storeBookCover($request->file('cover'));
+        }
+
+        $book->update($data);
         return redirect()->route('admin.books')->with('success', 'Buku diperbarui!');
     }
 
     public function booksDestroy(Book $book)
     {
+        $this->deleteBookCover($book->cover_path);
         $book->delete();
         return redirect()->route('admin.books')->with('success', 'Buku dihapus!');
     }
@@ -86,6 +101,18 @@ class AdminController extends Controller
 
         $loan->update(['status' => 'rejected']);
         return redirect()->route('admin.loans')->with('success', 'Peminjaman ditolak!');
+    }
+
+    private function storeBookCover(UploadedFile $cover): string
+    {
+        return $cover->store('book-covers', 'public');
+    }
+
+    private function deleteBookCover(?string $coverPath): void
+    {
+        if ($coverPath) {
+            Storage::disk('public')->delete($coverPath);
+        }
     }
 }
 

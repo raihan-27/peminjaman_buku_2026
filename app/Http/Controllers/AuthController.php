@@ -28,6 +28,7 @@ $user = User::where('email', $request->email)->first();
                 'name' => $user->name,
                 'email' => $user->email,
                 'role' => $user->role,
+                'profile_picture' => $user->profile_picture,
             ]]);
             return redirect()->route('dashboard')->with('success', 'Login berhasil!');
         }

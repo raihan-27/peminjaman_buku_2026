@@ -22,6 +22,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'profile_picture',
     ];
 
     public function loans()
@@ -50,5 +51,13 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function getProfilePictureUrl()
+    {
+        if ($this->profile_picture) {
+            return asset('storage/profile-pictures/' . $this->profile_picture);
+        }
+        return null;
     }
 }
