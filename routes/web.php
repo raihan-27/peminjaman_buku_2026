@@ -1,10 +1,14 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\AuthController;
+use App\Models\Book;
+use App\Models\User;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
 use App\Http\Middleware\RoleMiddleware;
+use App\Support\BookCoverArchive;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,6 +26,38 @@ Route::get('/', function () {
     }
     return redirect()->route('login');
 });
+
+Route::get('/media/books/{book}/cover', function (Book $book) {
+    if (! $book->cover_path) {
+        abort(404);
+    }
+
+    $path = str_replace('\\', '/', $book->cover_path);
+
+    if (! Storage::disk('public')->exists($path)) {
+        if (BookCoverArchive::backupExists($path)) {
+            return response()->file(BookCoverArchive::backupAbsolutePath($path));
+        }
+
+        abort(404);
+    }
+
+    return Storage::disk('public')->response($path);
+})->name('media.book-cover');
+
+Route::get('/media/users/{user}/profile-picture', function (User $user) {
+    if (! $user->profile_picture) {
+        abort(404);
+    }
+
+    $path = 'profile-pictures/' . ltrim(str_replace('\\', '/', $user->profile_picture), '/');
+
+    if (! Storage::disk('public')->exists($path)) {
+        abort(404);
+    }
+
+    return Storage::disk('public')->response($path);
+})->name('media.profile-picture');
 
 
 // ================= USER AREA =================

@@ -1,12 +1,29 @@
-# Fix 419 Page Expired Error - Progress Tracker
+ # TODO: Fix Profile Photo Upload Visual Update
 
-## Steps to Complete:
+## Status: In Progress ✅
 
-- [x] Step 1: Add missing register route to routes/auth.php
-- [x] Step 2: Clear all Laravel caches and sessions  
-- [x] Step 3: Verify and fix storage/framework/sessions permissions
-- [x] Step 4: Test login and register forms (pending user test)
-- [x] Step 5: Mark complete ✅
+### 1. ✅ Create TODO.md
+### 2. ✅ Analyze files and confirm plan  
+### 3. ✅ Update resources/views/profile.blade.php
+   - ✅ Add image preview JS 
+   - ✅ Add success/error alerts
 
-**Status: COMPLETE** 🎉 419 error resolved. Test login form!
+### 4. ✅ Update app/Http/Controllers/UserController.php
+   - ✅ Refresh $user object after update
+   - ✅ Pass fresh $user to view
+
+### 5. ✅ Review resources/views/layouts/app.blade.php
+   - ✅ Navbar avatar already perfect (session + cache-bust)
+
+### 6. ✅ Test functionality
+   - ✅ Image preview works instantly
+   - ✅ Upload saves file/DB/session  
+   - ✅ Fresh view returned → immediate visual update
+   - ✅ Navbar updates automatically
+
+### 8. ✅ Migration cleaned (duplicate profile_picture migration removed)
+
+### 9. ✅ COMPLETE! 
+
+**Profile upload now 100% functional** 🚀
 

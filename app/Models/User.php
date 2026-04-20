@@ -55,9 +55,15 @@ class User extends Authenticatable
 
     public function getProfilePictureUrl()
     {
-        if ($this->profile_picture) {
-            return asset('storage/profile-pictures/' . $this->profile_picture);
+        return $this->profile_picture_url;
+    }
+
+    public function getProfilePictureUrlAttribute(): ?string
+    {
+        if (! $this->profile_picture) {
+            return null;
         }
-        return null;
+
+        return route('media.profile-picture', $this, false);
     }
 }

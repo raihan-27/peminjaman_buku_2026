@@ -73,6 +73,8 @@ User::create([
             Book::create($data);
         }
 
+        $this->call(ImageSeeder::class);
+
         // Members
         $members = [
             ['name' => 'Ahmad Rahman', 'address' => 'Jl. Sudirman 123, Jakarta', 'phone' => '081234567890'],
@@ -92,4 +94,3 @@ User::create([
 
     }
 }
-

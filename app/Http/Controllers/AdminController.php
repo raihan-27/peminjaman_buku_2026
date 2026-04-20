@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Book;
 use App\Models\Loan;
 use App\Models\User;
+use App\Support\BookCoverArchive;
+use App\Support\BookCoverRegistry;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -14,12 +16,12 @@ class AdminController extends Controller
     public function books()
     {
         $books = Book::orderBy('title')->get();
-        return view('books.index', compact('books'));
+        return view('admin.books.index', compact('books'));
     }
 
     public function booksCreate()
     {
-        return view('books.create');
+        return view('admin.books.create');
     }
 
     public function booksStore(Request $request)
@@ -37,13 +39,14 @@ class AdminController extends Controller
         $data = $request->except('cover');
         $data['cover_path'] = $this->storeBookCover($request->file('cover'));
 
-        Book::create($data);
+        $book = Book::create($data);
+        BookCoverRegistry::sync($book);
         return redirect()->route('admin.books')->with('success', 'Buku ditambahkan!');
     }
 
     public function booksEdit(Book $book)
     {
-        return view('books.edit', compact('book'));
+        return view('admin.books.edit', compact('book'));
     }
 
     public function booksUpdate(Request $request, Book $book)
@@ -66,12 +69,14 @@ class AdminController extends Controller
         }
 
         $book->update($data);
+        BookCoverRegistry::sync($book->fresh());
         return redirect()->route('admin.books')->with('success', 'Buku diperbarui!');
     }
 
     public function booksDestroy(Book $book)
     {
         $this->deleteBookCover($book->cover_path);
+        BookCoverRegistry::remove($book);
         $book->delete();
         return redirect()->route('admin.books')->with('success', 'Buku dihapus!');
     }
@@ -105,7 +110,10 @@ class AdminController extends Controller
 
     private function storeBookCover(UploadedFile $cover): string
     {
-        return $cover->store('book-covers', 'public');
+        $path = $cover->store('book-covers', 'public');
+        BookCoverArchive::mirrorToBackup($path);
+
+        return str_replace('\\', '/', $path);
     }
 
     private function deleteBookCover(?string $coverPath): void
@@ -115,4 +123,3 @@ class AdminController extends Controller
         }
     }
 }
-

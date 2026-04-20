@@ -29,8 +29,8 @@
     <div class="col-lg-4">
         <div class="surface-card fade-in-up delay-1 h-100">
             <div class="surface-card-body">
-                @if($book->cover_url)
-                    <img src="{{ $book->cover_url }}" alt="Cover {{ $book->title }}" class="img-fluid rounded-4 border" style="width: 100%; object-fit: cover;">
+@if($book->cover_url)
+                    <img src="{{ $book->cover_url }}" alt="Cover {{ $book->title }}" class="img-fluid rounded-4 border shadow-sm" style="height: 400px; width: 100%; object-fit: cover;">
                 @else
                     <div class="empty-state">
                         <div class="empty-state-icon">

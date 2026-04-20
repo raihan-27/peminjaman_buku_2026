@@ -64,10 +64,10 @@
                     <div class="col-lg-4 col-md-6">
                         <div class="metric-card h-100 fade-in-up delay-{{ ($index % 3) + 1 }}">
                             <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
-                                @if($book->cover_url)
-                                    <img src="{{ $book->cover_url }}" alt="Cover {{ $book->title }}" class="book-cover-thumb" style="width: 72px; height: 98px;">
+@if($book->cover_url)
+                                    <img src="{{ $book->cover_url }}" alt="Cover {{ $book->title }}" class="book-cover-thumb rounded-4 border" style="width: 72px; height: 98px; object-fit: cover;">
                                 @else
-                                    <div class="d-flex align-items-center justify-content-center rounded-4 border" style="width: 72px; height: 98px; background: #f8fafc; color: var(--text-muted);">
+                                    <div class="d-flex align-items-center justify-content-center rounded-4 border" style="width: 72px; height: 98px; color: var(--text-muted); background: rgba(248, 250, 252, 0.58); backdrop-filter: blur(10px);">
                                         <i class="bi bi-book-half"></i>
                                     </div>
                                 @endif
@@ -79,24 +79,24 @@
                                 <i class="bi bi-pen me-1"></i>{{ Str::limit($book->author, 36) }}
                             </p>
 
-                            <div class="d-grid gap-2 mb-3">
-                                <div class="metric-card p-3">
-                                    <div class="metric-label">Stok</div>
-                                    <div class="fw-semibold">
-                                        {{ $book->stock > 0 ? $book->stock . ' Buku' : 'Habis' }}
-                                    </div>
-                                </div>
-                                <div class="metric-card p-3">
-                                    <div class="metric-label">Kategori</div>
+                            <div class="book-meta-grid mb-3">
+                                <div class="book-meta-card">
+                                    <div class="metric-label mb-1">Kategori</div>
                                     <div class="fw-semibold">{{ $book->category ?? 'Umum' }}</div>
+                                </div>
+                                <div class="book-meta-card d-flex align-items-center justify-content-between gap-3">
+                                    <div>
+                                        <div class="metric-label mb-1">Stok</div>
+                                        <div class="fw-semibold">{{ $book->stock > 0 ? 'Siap Dipinjam' : 'Habis' }}</div>
+                                    </div>
+                                    <span class="book-stock-pill {{ $book->stock > 0 ? 'is-available' : 'is-empty' }}">
+                                        {{ $book->stock }}
+                                        <small>buku</small>
+                                    </span>
                                 </div>
                             </div>
 
                             <div class="d-flex flex-wrap gap-2">
-                                <span class="soft-badge {{ $book->stock > 0 ? 'soft-badge-success' : 'soft-badge-danger' }}">
-                                    <i class="bi {{ $book->stock > 0 ? 'bi-check-circle' : 'bi-x-circle' }}"></i>
-                                    {{ $book->stock > 0 ? 'Siap Dipinjam' : 'Stok Habis' }}
-                                </span>
                                 <span class="soft-badge soft-badge-info">
                                     <i class="bi bi-bookmark-star"></i>
                                     {{ $book->category ?? 'Umum' }}

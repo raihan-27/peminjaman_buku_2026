@@ -1,4 +1,4 @@
-@extends('layouts.app')
+ @extends('layouts.app')
 
 @section('title', 'Edit Buku')
 @section('subtitle', 'Perbarui detail buku dan cover yang tersimpan')
@@ -58,18 +58,17 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Ganti Cover</label>
-                        <input type="file" class="form-control soft-input @error('cover') is-invalid @enderror" name="cover" accept=".jpg,.jpeg,.png,image/jpeg,image/png">
-                        <div class="form-text">Kosongkan jika cover lama tetap dipakai. JPG/PNG maksimal 2 MB.</div>
+                        <input type="file" class="form-control soft-input @error('cover') is-invalid @enderror" name="cover" accept="image/*">
+                        <div class="form-text">Kosongkan untuk keep cover lama. JPG/PNG/GIF, max 2MB.</div>
+                        @if($book->cover_url)
+                            <div class="mt-3 p-3 bg-light rounded-3">
+                                <small class="text-muted mb-1 d-block">Cover saat ini:</small>
+                                <img src="{{ $book->cover_url }}" alt="Current" class="rounded img-thumbnail" style="max-height: 120px; object-fit: cover;">
+                            </div>
+                        @endif
                         @error('cover') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>
-                    @if($book->cover_url)
-                        <div class="col-12">
-                            <label class="form-label fw-semibold">Cover Saat Ini</label>
-                            <div>
-                                <img src="{{ $book->cover_url }}" alt="Cover {{ $book->title }}" class="img-thumbnail" style="max-width: 180px; border-radius: 18px;">
-                            </div>
-                        </div>
-                    @endif
+                    {{-- Legacy cover_url fallback removed - use cover_path only --}}
                 </div>
 
                 <div class="d-flex flex-wrap gap-2 justify-content-end mt-4">

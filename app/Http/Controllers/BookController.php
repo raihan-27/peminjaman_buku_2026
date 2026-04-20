@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Book;
+use App\Support\BookCoverArchive;
+use App\Support\BookCoverRegistry;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -44,7 +46,8 @@ class BookController extends Controller
         $validated['cover_path'] = $this->storeBookCover($request->file('cover'));
         unset($validated['cover']);
 
-        Book::create($validated);
+        $book = Book::create($validated);
+        BookCoverRegistry::sync($book);
 
         return redirect()->route('books.index')
             ->with('success', 'Buku berhasil ditambahkan!');
@@ -88,6 +91,7 @@ class BookController extends Controller
 
         unset($validated['cover']);
         $book->update($validated);
+        BookCoverRegistry::sync($book->fresh());
 
         return redirect()->route('books.index')
             ->with('success', 'Buku berhasil diperbarui!');
@@ -99,6 +103,7 @@ class BookController extends Controller
     public function destroy(Book $book)
     {
         $this->deleteBookCover($book->cover_path);
+        BookCoverRegistry::remove($book);
         $book->delete();
 
         return redirect()->route('books.index')
@@ -108,6 +113,8 @@ class BookController extends Controller
     private function storeBookCover(UploadedFile $cover): string
     {
         $path = $cover->store('book-covers', 'public');
+        BookCoverArchive::mirrorToBackup($path);
+
         // Normalize path to use forward slashes for URLs
         return str_replace('\\', '/', $path);
     }

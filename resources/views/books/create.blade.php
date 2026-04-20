@@ -57,8 +57,8 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Cover Buku <span class="text-danger">*</span></label>
-                        <input type="file" class="form-control soft-input @error('cover') is-invalid @enderror" name="cover" accept=".jpg,.jpeg,.png,image/jpeg,image/png" required>
-                        <div class="form-text">Format JPG atau PNG, maksimal 2 MB.</div>
+                        <input type="file" class="form-control soft-input @error('cover') is-invalid @enderror" name="cover" accept="image/*" required>
+                        <div class="form-text">JPG, PNG, GIF (maks 2 MB) - akan tersimpan di storage/book-covers/</div>
                         @error('cover') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>
                 </div>

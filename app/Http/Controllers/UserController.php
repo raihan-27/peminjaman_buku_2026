@@ -125,13 +125,17 @@ class UserController extends Controller
 
             $user->update(['profile_picture' => $filename]);
             
+            // Refresh user dari database
+            $user->refresh();
+            
             // Update session dengan profile_picture terbaru
             $userSession = session('user');
             $userSession['profile_picture'] = $filename;
             session(['user' => $userSession]);
         }
 
-        return back()->with('success', 'Foto profil berhasil diperbarui!');
+        // Return view dengan user terbaru untuk immediate feedback
+        return view('profile', compact('user'))->with('success', 'Foto profil berhasil diperbarui!');
     }
 }
 

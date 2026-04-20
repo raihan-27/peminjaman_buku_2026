@@ -96,11 +96,11 @@
                         <tr>
                             <td><strong>{{ $index + 1 }}</strong></td>
                             <td>
-                                @if($book->cover_url)
-                                    <img src="{{ $book->cover_url }}" alt="Cover {{ $book->title }}" class="book-cover-thumb">
+@if($book->cover_url)
+                                    <img src="{{ $book->cover_url }}" alt="Cover {{ $book->title }}" class="book-cover-thumb" loading="lazy">
                                 @else
-                                    <div class="book-cover-thumb d-flex align-items-center justify-content-center soft-text">
-                                        <i class="bi bi-image"></i>
+                                    <div class="book-cover-thumb d-flex align-items-center justify-content-center soft-text" style="background: rgba(248, 250, 252, 0.58); backdrop-filter: blur(10px);">
+                                        <i class="bi bi-book"></i>
                                     </div>
                                 @endif
                             </td>

@@ -5,33 +5,76 @@
 
 <style>
 .auth-wrap {
-    max-width: 520px;
+    max-width: 760px;
     margin: 0 auto;
+    padding: 0.5rem 0 1rem;
 }
 
 .auth-panel {
-    background: rgba(255, 255, 255, 0.92);
-    border: 1px solid var(--border-soft);
-    border-radius: 24px;
-    box-shadow: var(--shell-shadow);
+    background:
+        radial-gradient(circle at 22% 18%, rgba(91, 93, 246, 0.14), transparent 28%),
+        radial-gradient(circle at 82% 78%, rgba(6, 182, 212, 0.14), transparent 24%),
+        rgba(255, 255, 255, 0.50);
+    backdrop-filter: blur(24px) saturate(1.08);
+    border: 1px solid rgba(226, 232, 240, 0.88);
+    border-radius: 32px;
+    box-shadow: 0 28px 72px rgba(15, 23, 42, 0.11);
     overflow: hidden;
 }
 
 .auth-panel-body {
-    padding: 1.75rem;
+    padding: 2rem;
 }
 
 .auth-icon {
-    width: 76px;
-    height: 76px;
-    border-radius: 22px;
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #4f46e5, #2563eb);
+    background: linear-gradient(135deg, #5b5df6, #2563eb);
     color: #fff;
     font-size: 2rem;
-    box-shadow: 0 12px 24px rgba(79, 70, 229, 0.24);
+    box-shadow: 0 18px 36px rgba(91, 93, 246, 0.24);
+}
+
+.auth-panel .input-group {
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid rgba(226, 232, 240, 0.88);
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(12px);
+}
+
+.auth-panel .input-group-text {
+    background: transparent;
+    border: none;
+    color: var(--primary);
+}
+
+.auth-panel .soft-input {
+    border: none;
+    background: transparent;
+}
+
+.auth-panel .soft-input:focus {
+    box-shadow: none;
+}
+
+.auth-panel .toggle-password {
+    cursor: pointer;
+    color: var(--text-muted);
+}
+
+.auth-panel .btn {
+    border-radius: 999px;
+}
+
+@media (max-width: 575.98px) {
+    .auth-panel-body {
+        padding: 1.4rem;
+    }
 }
 </style>
 

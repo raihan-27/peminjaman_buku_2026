@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Support\Facades\Storage;
 
 class Book extends Model
 {
@@ -30,6 +29,10 @@ class Book extends Model
 
     public function getCoverUrlAttribute(): ?string
     {
-        return $this->cover_path ? Storage::url($this->cover_path) : null;
+        if (! $this->cover_path) {
+            return null;
+        }
+
+        return route('media.book-cover', $this, false);
     }
 }

@@ -6,27 +6,43 @@
 @section('content')
 <style>
 .book-card {
-    background: rgba(255, 255, 255, 0.92);
-    border: 1px solid var(--border-soft);
-    border-radius: 16px;
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.58), rgba(255, 255, 255, 0.40));
+    backdrop-filter: blur(22px) saturate(1.05);
+    border: 1px solid rgba(226, 232, 240, 0.84);
+    border-radius: 28px;
     padding: 1.5rem;
-    transition: all 0.3s ease;
+    transition: transform 0.26s ease, box-shadow 0.26s ease, border-color 0.26s ease;
     height: 100%;
     display: flex;
     flex-direction: column;
+    box-shadow: 0 18px 42px rgba(15, 23, 42, 0.08);
+    position: relative;
+    overflow: hidden;
 }
 
 .book-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
-    border-color: var(--primary);
+    transform: translateY(-5px);
+    box-shadow: 0 28px 60px rgba(15, 23, 42, 0.12);
+    border-color: rgba(91, 93, 246, 0.22);
+}
+
+.book-card::before {
+    content: '';
+    position: absolute;
+    inset: 0 auto auto 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(90deg, #5b5df6, #06b6d4);
 }
 
 .book-cover {
     width: 100%;
-    height: 200px;
-    background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
-    border-radius: 12px;
+    height: 220px;
+    background:
+        radial-gradient(circle at 50% 10%, rgba(91, 93, 246, 0.10), transparent 35%),
+        linear-gradient(135deg, rgba(240, 244, 248, 0.92) 0%, rgba(217, 226, 236, 0.84) 100%);
+    border-radius: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -62,7 +78,7 @@
 }
 
 .book-title {
-    font-size: 1.1rem;
+    font-size: 1.08rem;
     font-weight: 700;
     color: var(--text-dark);
     margin-bottom: 0.3rem;
@@ -76,19 +92,22 @@
 }
 
 .book-info {
-    display: flex;
-    gap: 1rem;
+    display: grid;
+    gap: 0.75rem;
     margin-bottom: 1rem;
-    padding: 0.75rem;
-    background: #f8fafc;
-    border-radius: 12px;
+    padding: 0.95rem;
+    background: rgba(248, 250, 252, 0.40);
+    backdrop-filter: blur(14px);
+    border-radius: 18px;
     font-size: 0.85rem;
+    border: 1px solid rgba(226, 232, 240, 0.72);
 }
 
 .info-item {
     display: flex;
     align-items: center;
     gap: 0.3rem;
+    flex-wrap: wrap;
 }
 
 .info-label {
@@ -103,17 +122,20 @@
 
 .stock-badge {
     display: inline-block;
-    padding: 0.3rem 0.7rem;
-    background: var(--success-bg);
+    padding: 0.34rem 0.75rem;
+    background: rgba(209, 250, 229, 0.66);
     color: var(--success);
     border-radius: 999px;
     font-size: 0.75rem;
     font-weight: 600;
+    border: 1px solid rgba(167, 243, 208, 0.72);
+    backdrop-filter: blur(12px);
 }
 
 .stock-badge.out {
-    background: #fee2e2;
+    background: rgba(254, 226, 226, 0.66);
     color: var(--danger);
+    border-color: rgba(252, 165, 165, 0.72);
 }
 
 .book-actions {
@@ -125,40 +147,55 @@
 .btn-pinjam {
     flex: 1;
     padding: 0.6rem 1rem;
-    background: linear-gradient(135deg, var(--primary), #2563eb);
+    background: linear-gradient(135deg, #5b5df6, #2563eb);
     color: white;
     border: none;
-    border-radius: 10px;
+    border-radius: 999px;
     font-weight: 600;
     font-size: 0.9rem;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: transform 0.22s ease, box-shadow 0.22s ease, filter 0.22s ease;
+    box-shadow: 0 14px 28px rgba(91, 93, 246, 0.18);
 }
 
 .btn-pinjam:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    box-shadow: 0 18px 36px rgba(91, 93, 246, 0.24);
 }
 
 .btn-pinjam:disabled {
-    background: #cbd5e1;
+    background: rgba(203, 213, 225, 0.82);
     cursor: not-allowed;
     transform: none;
+    box-shadow: none;
 }
 
 .empty-state {
     grid-column: 1 / -1;
     padding: 3rem;
     text-align: center;
-    background: rgba(255, 255, 255, 0.9);
-    border: 1px solid var(--border-soft);
-    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.46);
+    backdrop-filter: blur(22px) saturate(1.05);
+    border: 1px solid rgba(226, 232, 240, 0.84);
+    border-radius: 28px;
+    box-shadow: 0 18px 42px rgba(15, 23, 42, 0.08);
 }
 
 .empty-icon {
-    font-size: 3rem;
+    font-size: 3.25rem;
     color: var(--primary);
     margin-bottom: 1rem;
+}
+
+@media (max-width: 767.98px) {
+    .book-card {
+        padding: 1.25rem;
+        border-radius: 24px;
+    }
+
+    .book-cover {
+        height: 200px;
+    }
 }
 </style>
 
@@ -180,8 +217,8 @@
                 <div class="col-sm-6 col-lg-4">
                     <div class="book-card">
                         <div class="book-cover">
-                            @if($book->cover_path)
-                                <img src="{{ asset('storage/' . $book->cover_path) }}" alt="{{ $book->title }}" loading="lazy">
+                            @if($book->cover_url)
+                                <img src="{{ $book->cover_url }}" alt="{{ $book->title }}" loading="lazy">
                             @else
                                 <div class="book-cover-placeholder">
                                     <i class="bi bi-book"></i>
